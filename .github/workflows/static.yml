@@ -1,33 +1,25 @@
-name: Deploy static content to Pages
+name: Deploy Application
 
 on:
   push:
-    branches: ["main"]
-
-# Tambah env ini untuk selesaikan isu Node 20
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches:
+      - main
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest # Ini akan menggunakan versi Node terbaru yang disokong secara automatik
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # Gunakan v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          node-version: '22' # Gunakan LTS versi 22 atau '24' untuk mengelakkan amaran deprecation
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4 # Gunakan v4
+        with:
+          name: build-output
+          path: .
